@@ -6,12 +6,12 @@ from requests import ConnectionError
 import os
 
 from model import MinCommand
+from model import StatusView
 from bashhub_globals import *
 
 def search(user_id=BH_USER_ID, limit=100, path='', query='', system_id='',
         session_name=''):
 
-    payload = {'userId' : user_id, 'limit' : limit }
 
     if path:
         payload["path"] = os.getcwd()
@@ -41,4 +41,15 @@ def save_command(command):
         print "Sorry, looks like there's a connection error"
         pass
 
+def get_status_view(user_context):
+    url = BH_URL + "/client-view/v1/status"
+
+    payload = { 'userId' : user_context.user_id, 'processId' :
+            user_context.process_id, 'startTime' : user_context.start_time  }
+    try:
+        r = requests.get(url, params=payload)
+        return StatusView.from_JSON(r.json())
+    except ConnectionError as error:
+        print("Sorry, looks like there's a connection error")
+        return None
 

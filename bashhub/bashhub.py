@@ -15,6 +15,7 @@ from version import __version__
 import shutil
 import requests
 import subprocess
+import shell_utils
 
 def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
@@ -28,7 +29,7 @@ def print_version(ctx, param, value):
 
 def bashhub():
     """Bashhub command line client"""
-    pass
+e   pass
 
 
 @bashhub.command()
@@ -54,6 +55,16 @@ def save(command, path, pid, process_start_time):
 def setup():
     """Run bashhub user and system setup"""
     bashhub_setup.main()
+
+
+@bashhub.command()
+def status():
+    """Show status information for this session and user."""
+    # Get our user and session information from our context
+    user_context = shell_utils.build_user_context()
+    status_view = rest_client.get_status_view(user_context)
+
+
 
 @bashhub.command()
 def update():
