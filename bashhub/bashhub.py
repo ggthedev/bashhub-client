@@ -29,7 +29,7 @@ def print_version(ctx, param, value):
 
 def bashhub():
     """Bashhub command line client"""
-e   pass
+    pass
 
 
 @bashhub.command()
