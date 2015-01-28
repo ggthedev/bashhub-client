@@ -27,7 +27,6 @@ def search(user_id=BH_USER_ID, limit=100, path='', query='', system_id='',
 
     try:
         r = requests.get(url, params=payload)
-        print(r.json())
         return MinCommand.from_JSON_list(r.json())
 
     except ConnectionError as error:
