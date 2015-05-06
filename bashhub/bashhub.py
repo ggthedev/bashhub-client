@@ -91,12 +91,16 @@ def update(version):
     shell_command = "bash -e {0} {1}".format(filename, version)
     subprocess.call(shell_command, shell=True)
     os.remove(filename)
-    bashhub_setup.update_system_info(BH_SYSTEM_ID)
 
 @bashhub.group()
 def util():
-    """Misc utils for the command line"""
+    """Misc utils used by bashhub"""
     pass
+
+@util.command()
+def update_system_info():
+    """Updates system info for bashhub.com"""
+    bashhub_setup.update_system_info(BH_SYSTEM_ID)
 
 @util.command()
 @click.argument('date_string', type=str)
