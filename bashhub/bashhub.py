@@ -91,6 +91,7 @@ def update(version):
     shell_command = "bash -e {0} {1}".format(filename, version)
     subprocess.call(shell_command, shell=True)
     os.remove(filename)
+    bashhub_setup.update_system_info(BH_SYSTEM_ID)
 
 @bashhub.group()
 def util():
