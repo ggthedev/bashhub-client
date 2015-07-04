@@ -7,11 +7,12 @@ import requests
 from requests import ConnectionError
 import cli.app
 import os
+import traceback
 
 from model import MinCommand
 from bashhub_globals import *
 import rest_client
-from interactive_search import InteractiveSearch
+from i_search import InteractiveSearch
 
 @cli.app.CommandLineApp
 def bh(app):
@@ -44,6 +45,7 @@ def bh(app):
 
 def print_commands(commands):
     for command in reversed(commands):
+        print(command.created)
         print(command)
 
 def run_interactive(commands):
@@ -75,6 +77,7 @@ def main():
         bh.run()
     except Exception as e:
         print("Oops, look like an exception occured: " + str(e))
+        print(traceback.format_exc())
         sys.exit(1)
     except KeyboardInterrupt:
         # To allow Ctrl+C (^C). Print a new line to drop the prompt.
