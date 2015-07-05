@@ -3,14 +3,25 @@
 import npyscreen
 import datetime
 import curses
+import time
 
 class CommandList(npyscreen.MultiLineAction):
     def __init__(self, *args, **keywords):
         super(CommandList, self).__init__(*args, **keywords)
+        self.command_handlers = {}
+
+        # Any non highlited command handlers
         self.add_handlers({
-            "^I": self.when_add_record,
             "q":  self.exit_app,
             curses.ascii.ESC : self.exit_app
+        })
+
+        # All handlers for when a command is highlighted
+        self.add_command_handlers({
+            curses.ascii.NL:  self.select_command,
+            curses.ascii.CR:  self.select_command,
+            curses.ascii.SP:  self.go_to_command_details,
+            "i":  self.go_to_command_details
         })
 
     def exit_app(self, vl):
@@ -19,19 +30,24 @@ class CommandList(npyscreen.MultiLineAction):
     def display_value(self, vl):
         return "{0}".format(vl)
 
-    def actionHighlighted(self, act_on_this, keypress):
-        self.parent.parentApp.getForm('EDITRECORDFM').value = act_on_this
+    def add_command_handlers(self, command_handlers):
+        self.command_handlers = command_handlers
+        # wire up to use npyscreens h_act_on_hightlited
+        event_handlers = dict((key, self.h_act_on_highlighted) for (key, value) in
+                command_handlers.items())
+        self.add_handlers(event_handlers)
+
+    def actionHighlighted(self, command, keypress):
+        if keypress in self.command_handlers:
+            return self.command_handlers[keypress](command)
+
+    def go_to_command_details(self, command):
+        self.parent.parentApp.getForm('EDITRECORDFM').value = command
         self.parent.parentApp.switchForm('EDITRECORDFM')
 
-
-    def when_add_record(self, *args, **keywords):
-        self.parent.parentApp.getForm('EDITRECORDFM').value = None
-        self.parent.parentApp.switchForm('EDITRECORDFM')
-
-    def when_delete_record(self, *args, **keywords):
-        self.parent.parentApp.myDatabase.delete_record(self.values[self.cursor_line][0])
-        self.parent.update_list()
-
+    def select_command(self, command):
+        self.parent.parentApp.return_value = command
+        self.parent.parentApp.switchForm(None)
 
 class CommandListDisplay(npyscreen.FormMutt):
     MAIN_WIDGET_CLASS = CommandList
@@ -91,11 +107,9 @@ class InteractiveSearch(npyscreen.NPSAppManaged):
         super(InteractiveSearch, self).__init__()
         self.commands = commands
         self.rest_client = rest_client
+        self.return_value = "that"
 
     def onStart(self):
         self.addForm("MAIN", CommandListDisplay)
         self.addForm("EDITRECORDFM", EditRecord)
 
-if __name__ == '__main__':
-    my_app = InteractiveSearch(["Some command", "and another one"])
-    my_app.run()

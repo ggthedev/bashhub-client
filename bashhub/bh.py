@@ -51,8 +51,10 @@ def print_commands(commands):
 def run_interactive(commands):
     i_search = InteractiveSearch(commands)
     command = i_search.run()
-    f = open(BH_HOME + '/response.bh','w+')
-    print(command, file=f)
+    print(command)
+    if command is not None:
+        f = open(BH_HOME + '/response.bh','w+')
+        print(command.command, file=f)
 
 bh.add_param("-n", "--number", help="Limit the number of previous commands. \
         Default is 100.", default=100, type=int)
