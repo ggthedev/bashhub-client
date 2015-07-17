@@ -50,8 +50,10 @@ def print_commands(commands):
 
 def run_interactive(commands):
     i_search = InteractiveSearch(commands)
-    command = i_search.run()
-    print(command)
+    i_search.run()
+    # numpy bullshit since it doesn't return anything.
+    # Consider submitting a patchset for it.
+    command = i_search.return_value
     if command is not None:
         f = open(BH_HOME + '/response.bh','w+')
         print(command.command, file=f)

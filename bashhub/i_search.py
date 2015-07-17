@@ -54,7 +54,7 @@ class CommandListDisplay(npyscreen.FormMutt):
     #COMMAND_WIDGET_CLASS = None
 
     def beforeEditing(self):
-        self.wStatus1.value  = "Status Line "
+        self.wStatus1.value  = "Bashhub Commands "
         self.update_list()
 
     def update_list(self):
@@ -107,9 +107,8 @@ class InteractiveSearch(npyscreen.NPSAppManaged):
         super(InteractiveSearch, self).__init__()
         self.commands = commands
         self.rest_client = rest_client
-        self.return_value = "that"
+        self.return_value = None
 
     def onStart(self):
         self.addForm("MAIN", CommandListDisplay)
         self.addForm("EDITRECORDFM", EditRecord)
-
