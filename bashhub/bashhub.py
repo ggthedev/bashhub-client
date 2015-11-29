@@ -10,7 +10,8 @@ from model import CommandForm
 from model import UserContext
 import rest_client
 import bashhub_setup
-from bashhub_globals import *
+import bashhub_globals
+from bashhub_globals import BH_USER_ID, BH_SYSTEM_ID, BH_FILTER
 from version import __version__
 import shutil
 import requests
@@ -48,7 +49,6 @@ def version():
 @click.argument('exit_status', type=int)
 def save(command, path, pid, process_start_time, exit_status):
     """Save a command to bashhub.com"""
-
     pid_start_time = unix_time_to_epoc_millis(process_start_time)
     command = command.strip()
 
@@ -57,7 +57,8 @@ def save(command, path, pid, process_start_time, exit_status):
         return
 
     # Check if we should filter this command.
-    if BH_FILTER and re.findall(BH_FILTER, command):
+    bh_filter = bashhub_globals.BH_FILTER
+    if bh_filter and re.findall(bh_filter, command):
         return
 
     context = UserContext(pid, pid_start_time, BH_USER_ID, BH_SYSTEM_ID)
